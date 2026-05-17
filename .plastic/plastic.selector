@@ -1,0 +1,4 @@
+repository "Chicken Run (공동작업_01)/Chicken Run (공동작업_01)@14569709144136@cloud"
+  path "/"
+    br "/main"
+    co "/main"
