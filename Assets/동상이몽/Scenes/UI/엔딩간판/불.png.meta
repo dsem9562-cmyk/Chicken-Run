@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 629bc0ce31603d044b3319b1bb2bef6d
+guid: d7f761f635d287849a3927e158b9d88d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2298597949131906829
-    second: "\uC608\uC2DC_0"
+      213: -1970222105937173846
+    second: "\uBD88_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -72,10 +72,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uC608\uC2DC_0"
+      name: "\uBD88_0"
       rect:
         serializedVersion: 2
-        x: 160
-        y: 40
-        width: 360
-        height: 322
+        x: 0
+        y: 0
+        width: 1536
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3f02d80085db910e0800000000000000
-      internalID: -2298597949131906829
+      spriteID: aa22efeee6d58a4e0800000000000000
+      internalID: -1970222105937173846
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uC608\uC2DC_0": -2298597949131906829
+      "\uBD88_0": -1970222105937173846
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

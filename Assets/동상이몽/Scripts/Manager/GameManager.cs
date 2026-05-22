@@ -21,18 +21,31 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // 씬이 바뀔 때마다 데이터를 리셋하기 위해 이벤트 연결
+            // ✅ 게임 실행할 때마다 엔딩 해금 초기화
+            ResetEndings();
+
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else Destroy(gameObject);
     }
 
-    // 새로운 씬(스테이지)이 시작될 때마다 실행되는 함수
+    // ✅ 엔딩 해금 데이터만 초기화
+    void ResetEndings()
+    {
+        foreach (EndingType type in System.Enum.GetValues(typeof(EndingType)))
+        {
+            PlayerPrefs.DeleteKey("Ending_" + type.ToString());
+        }
+
+        PlayerPrefs.Save();
+        Debug.Log("[GameManager] 엔딩 해금 데이터 초기화 완료");
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         isDead = false;
 
-        // 게임 플레이 씬일 때만 초기화
+        // 게임 플레이 씬일 때만 기본 엔딩 타입 초기화
         if (scene.name == "GameScene")
         {
             currentEndingType = EndingType.UniverseConqueror;
@@ -68,7 +81,6 @@ public class GameManager : MonoBehaviour
     public void SetItem(EndingType type)
     {
         currentEndingType = type;
-        // 요청하신 문구 그대로 적용
         Debug.Log("엔딩 타입 설정됨: " + type);
     }
 
@@ -79,7 +91,6 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("[BossDeathHandler] 보스 처치! 현재 아이템: " + currentEndingType);
 
-        // ✅ 엔딩 해금
         UnlockEnding(currentEndingType);
 
         StartCoroutine(LoadEndingScene());
