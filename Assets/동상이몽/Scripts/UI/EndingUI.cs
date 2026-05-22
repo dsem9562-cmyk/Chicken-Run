@@ -26,14 +26,16 @@ public class EndingManager : MonoBehaviour
             return;
         }
 
+        GameManager.EndingType type = GameManager.Instance.currentEndingType;
+
         // ✅ 현재 엔딩 타입 로그 확인
-        Debug.Log("[EndingManager] 현재 엔딩 타입: " + GameManager.Instance.currentItem);
+        Debug.Log("[EndingManager] 현재 엔딩 타입: " + type);
 
         // ✅ 엔딩 해금
-        GameManager.Instance.UnlockEnding(GameManager.Instance.currentItem);
+        GameManager.Instance.UnlockEnding(type);
 
         // ✅ 엔딩 스프라이트 배열 가져오기
-        currentEnding = GetEndingByType(GameManager.Instance.currentItem);
+        currentEnding = GetEndingByType(type);
 
         // ✅ 엔딩 컷 수 로그 확인
         Debug.Log("[EndingManager] 엔딩 컷 수: " + currentEnding.Length);

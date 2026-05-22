@@ -1,76 +1,85 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    // 🌟 싱글톤 - 어디서든 GameManager.Instance로 접근 가능
     public static GameManager Instance;
+    public GameObject currentItem;
 
-    // ===== 엔딩 종류 =====
-    public enum EndingType
+    public enum EndingType { UniverseConqueror, ChickenGod, BuddhaChicken, HotSpicy };
+    public EndingType currentEndingType = EndingType.UniverseConqueror;
+
+    [Header("씬 전환 딜레이 (초)")]
+    public float delay = 1f;
+
+    private bool isDead = false;
+
+    private void Awake()
     {
-        UniverseConqueror = 0,  // 🌌 우주정복자 (아이템 없음)
-        ChickenGod = 1,         // 🙏 강림! 치느님! (치킨)
-        BuddhaChicken = 2,      // ☸️ 대자대비 닭미륵 (삼계탕)
-        HotSpicy = 3            // 🔥 유니버스 핫스파이시 (불닭)
-    }
-
-    // ===== 현재 게임 상태 =====
-    [Header("현재 보유 아이템")]
-    public EndingType currentItem = EndingType.UniverseConqueror;
-    // 👆 기본값: 아이템 없음 = 우주정복자 엔딩
-
-    // ===== Awake: 싱글톤 세팅 =====
-    void Awake()
-    {
-        // 이미 있으면 새 거 삭제 (중복 방지)
-        if (Instance != null && Instance != this)
+        if (Instance == null)
         {
-            Destroy(gameObject);
-            return;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            // 씬이 바뀔 때마다 데이터를 리셋하기 위해 이벤트 연결
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject); // 씬 바뀌어도 유지
+        else Destroy(gameObject);
     }
 
-    // ===== 아이템 획득 =====
-    public void SetItem(EndingType item)
+    // 새로운 씬(스테이지)이 시작될 때마다 실행되는 함수
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        currentItem = item;
-        Debug.Log($"🎒 아이템 획득: {item}");
-    }
+        isDead = false;
 
-    // ===== 새 게임 시작 시 초기화 =====
-    public void ResetGame()
-    {
-        currentItem = EndingType.UniverseConqueror;
-        Debug.Log("🔄 게임 데이터 초기화");
-    }
-
-    // ===== 엔딩 잠금 해제 =====
-    public void UnlockEnding(EndingType ending)
-    {
-        string key = "Ending_" + (int)ending;
-        PlayerPrefs.SetInt(key, 1);
-        PlayerPrefs.Save();
-        Debug.Log($"🏆 엔딩 잠금 해제: {ending}");
-    }
-
-    // ===== 엔딩이 잠금 해제됐는지 확인 =====
-    public bool IsEndingUnlocked(EndingType ending)
-    {
-        string key = "Ending_" + (int)ending;
-        return PlayerPrefs.GetInt(key, 0) == 1;
-    }
-
-    // ===== 모든 엔딩 기록 삭제 (디버그용) =====
-    public void ResetAllEndings()
-    {
-        for (int i = 0; i < 4; i++)
+        // 게임 플레이 씬일 때만 초기화
+        if (scene.name == "GameScene")
         {
-            PlayerPrefs.DeleteKey("Ending_" + i);
+            currentEndingType = EndingType.UniverseConqueror;
         }
+    }
+
+    public void UnlockEnding(EndingType type)
+    {
+        PlayerPrefs.SetInt("Ending_" + type.ToString(), 1);
         PlayerPrefs.Save();
-        Debug.Log("🗑️ 모든 엔딩 기록 삭제됨");
+
+        Debug.Log($"<color=cyan>[GameManager]</color> {type} 엔딩 해금!");
+    }
+
+    public bool IsEndingUnlocked(EndingType type)
+    {
+        return PlayerPrefs.GetInt("Ending_" + type.ToString(), 0) == 1;
+    }
+
+    public void SetItem(EndingType type)
+    {
+        currentEndingType = type;
+        // 요청하신 문구 그대로 적용
+        Debug.Log("엔딩 타입 설정됨: " + type);
+    }
+
+    public void OnBossDead()
+    {
+        if (isDead) return;
+        isDead = true;
+
+        Debug.Log("[BossDeathHandler] 보스 처치! 현재 아이템: " + currentEndingType);
+
+        // ✅ 엔딩 해금
+        UnlockEnding(currentEndingType);
+
+        StartCoroutine(LoadEndingScene());
+    }
+
+    System.Collections.IEnumerator LoadEndingScene()
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene("EndingScene");
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

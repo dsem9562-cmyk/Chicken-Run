@@ -2,46 +2,22 @@ using UnityEngine;
 
 public class ItemPickup : MonoBehaviour
 {
-    [Header("이 아이템의 종류")]
-    public GameManager.EndingType itemType;
-    // 👆 Inspector에서 어떤 아이템인지 선택
-    // - UniverseConqueror (기본/없음)
-    // - ChickenGod (치킨)
-    // - BuddhaChicken (삼계탕)
-    // - HotSpicy (불닭)
+    [Header("이 아이템이 부여할 엔딩 타입")]
+    public GameManager.EndingType endingType;
 
-    [Header("효과음 (선택)")]
-    public AudioClip pickupSound;
-
-    // 플레이어와 충돌 시
-    void OnTriggerEnter2D(Collider2D other)
+    public void OnItemPickup()
     {
-        // 플레이어 태그인지 확인
-        if (other.CompareTag("Player"))
-        {
-            PickUp();
-        }
-    }
-
-    void PickUp()
-    {
-        // GameManager에 아이템 저장
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.SetItem(itemType);
+            // 1. 매니저에게 정보 전달
+            GameManager.Instance.SetItem(endingType);
+
+            // 2. 확인 로그 출력
+            Debug.Log("[ItemPickup] 아이템 획득! 엔딩타입: \" + endingType");
         }
         else
         {
-            Debug.LogWarning("⚠️ GameManager가 씬에 없습니다!");
+            Debug.LogError("[ItemPickup] GameManager 없음!");
         }
-
-        // 효과음 재생 (있으면)
-        if (pickupSound != null)
-        {
-            AudioSource.PlayClipAtPoint(pickupSound, transform.position);
-        }
-
-        // 아이템 사라짐
-        Destroy(gameObject);
     }
 }

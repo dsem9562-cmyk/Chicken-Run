@@ -10,14 +10,14 @@ public class GameStartInitializer : MonoBehaviour
     [Header("플레이어 설정")]
     [Tooltip("초기화할 플레이어 오브젝트 (자동으로 찾을 수도 있음)")]
     public Transform player;
-    
+
     [Tooltip("스폰 후보 위치들 (2개 중 하나 랜덤 선택). 벽/경계에서 떨어진 빈 공간에 배치")]
     public Vector3[] spawnPositions = new Vector3[]
     {
         new Vector3(-5.5f, 2.16f, 7.736767f),
         new Vector3(-5.5f, 0.53f, 7.736767f)
     };
-    
+
     [Header("카메라 설정")]
     [Tooltip("시작 섹션 번호 (1-3 = 플레이어 추적, 4-7 = 자동 스크롤)")]
     public int startSection = 1;
@@ -41,7 +41,7 @@ public class GameStartInitializer : MonoBehaviour
                     playerObj = parent.transform.GetChild(0).gameObject;
                 }
             }
-            
+
             if (playerObj != null)
             {
                 player = playerObj.transform;
@@ -69,7 +69,7 @@ public class GameStartInitializer : MonoBehaviour
                 return;
             }
         }
-        
+
         // 플레이어 위치 설정 + 스킨 컨트롤러 보강 (player가 Inspector에서 할당된 경우)
         if (player != null)
         {
@@ -102,7 +102,7 @@ public class GameStartInitializer : MonoBehaviour
             }
             Debug.Log($"GameStartInitializer: 플레이어 위치를 {spawnPos}로 설정했습니다. (현재 월드: {player.position})");
         }
-        
+
         // 카메라 설정
         CameraController camController = Camera.main?.GetComponent<CameraController>();
         if (camController != null)
@@ -121,6 +121,20 @@ public class GameStartInitializer : MonoBehaviour
         }
 
         CreateSection01LeftWall();
+    }
+
+    void Start()
+    {
+        // AudioManager가 충분히 초기화된 시점인 Start에서 배경음악 실행
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBGM(0);
+            Debug.Log("GameStartInitializer: 배경음악 0번 재생을 요청했습니다.");
+        }
+        else
+        {
+            Debug.LogWarning("GameStartInitializer: AudioManager.Instance를 찾을 수 없습니다!");
+        }
     }
 
     void CreateSection01LeftWall()

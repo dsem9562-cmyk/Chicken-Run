@@ -28,7 +28,7 @@ public class SectionTrigger : MonoBehaviour
 
         CameraController cam = Camera.main != null ? Camera.main.GetComponent<CameraController>() : null;
         if (cam == null)
-            cam = Object.FindObjectOfType<CameraController>();
+            cam = Object.FindAnyObjectByType<CameraController>();
         if (cam == null)
         {
             Debug.LogWarning($"SectionTrigger ({gameObject.name}): CameraController를 찾을 수 없습니다! Main Camera에 CameraController 컴포넌트를 추가하세요.");
