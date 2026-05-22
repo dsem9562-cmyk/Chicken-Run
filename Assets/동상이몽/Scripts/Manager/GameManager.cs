@@ -52,6 +52,19 @@ public class GameManager : MonoBehaviour
         return PlayerPrefs.GetInt("Ending_" + type.ToString(), 0) == 1;
     }
 
+    public void PlayEndingFromGallery(EndingType type)
+    {
+        if (!IsEndingUnlocked(type))
+        {
+            Debug.LogWarning($"[GameManager] {type} 엔딩이 아직 해금되지 않았습니다.");
+            return;
+        }
+
+        currentEndingType = type;
+        Debug.Log("[GameManager] 갤러리에서 엔딩 재생: " + type);
+        SceneManager.LoadScene("EndingScene");
+    }
+
     public void SetItem(EndingType type)
     {
         currentEndingType = type;
