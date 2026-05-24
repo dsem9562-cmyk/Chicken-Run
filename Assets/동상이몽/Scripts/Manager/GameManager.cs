@@ -65,6 +65,28 @@ public class GameManager : MonoBehaviour
         return PlayerPrefs.GetInt("Ending_" + type.ToString(), 0) == 1;
     }
 
+    // 🌟 추가된 부분: 현재 엔딩 타입에 맞춰 AudioManager에 BGM 번호를 전달하는 함수
+    private void PlayEndingBGM()
+    {
+        if (AudioManager.Instance == null) return;
+
+        switch (currentEndingType)
+        {
+            case EndingType.UniverseConqueror: // 우주 정복 (일반)
+                AudioManager.Instance.PlayBGM(8);
+                break;
+            case EndingType.ChickenGod:        // 치킨 신 (특수 1)
+                AudioManager.Instance.PlayBGM(9);
+                break;
+            case EndingType.BuddhaChicken:     // 부처 치킨 / 삼계탕 (특수 2)
+                AudioManager.Instance.PlayBGM(10);
+                break;
+            case EndingType.HotSpicy:          // 핫 스파이시 / 불닭 (특수 3)
+                AudioManager.Instance.PlayBGM(11);
+                break;
+        }
+    }
+
     public void PlayEndingFromGallery(EndingType type)
     {
         if (!IsEndingUnlocked(type))
@@ -75,6 +97,10 @@ public class GameManager : MonoBehaviour
 
         currentEndingType = type;
         Debug.Log("[GameManager] 갤러리에서 엔딩 재생: " + type);
+
+        // 🌟 갤러리에서 씬 넘어가기 직전에 BGM 재생!
+        PlayEndingBGM();
+
         SceneManager.LoadScene("EndingScene");
     }
 
@@ -99,6 +125,10 @@ public class GameManager : MonoBehaviour
     System.Collections.IEnumerator LoadEndingScene()
     {
         yield return new WaitForSeconds(delay);
+
+        // 🌟 보스 처치 후 씬 넘어가기 직전에 BGM 재생!
+        PlayEndingBGM();
+
         SceneManager.LoadScene("EndingScene");
     }
 

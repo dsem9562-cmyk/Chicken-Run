@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // 🌟 추가된 부분 1: 씬 관리 기능을 쓰기 위해 맨 위에 추가
 
 public class AudioManager : MonoBehaviour
 {
@@ -21,6 +22,33 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    // =========================================================
+    // 🌟 추가된 부분 2: 여기서부터 OnSceneLoaded까지 통째로 추가
+    // =========================================================
+    private void OnEnable()
+    {
+        // 스크립트가 활성화될 때, 씬이 로드되는 이벤트에 감지기(OnSceneLoaded)를 달아줍니다.
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        // 스크립트가 비활성화될 때, 감지기를 뗍니다.
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 방금 로드된 씬의 이름이 "MainMenu" 라면 0번 브금을 틉니다.
+        // ⚠️ 주의: 이전 스크린샷을 보니 씬 이름이 "MainMenu"인 것 같아 이렇게 적었습니다.
+        // 혹시 실제 씬 이름이 다르다면 이 부분을 꼭 똑같이 맞춰주세요!
+        if (scene.name == "MainMenu")
+        {
+            PlayBGM(0);
+        }
+    }
+    // =========================================================
 
     // BGM을 재생하는 함수 (인덱스 번호로 호출)
     public void PlayBGM(int bgmIndex)
