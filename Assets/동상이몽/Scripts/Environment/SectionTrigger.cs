@@ -1,9 +1,15 @@
 using UnityEngine;
 using UnityEngine.Video;
 
-public class SectionTrigger : MonoBehaviour
+// 🌟 주의: 이 부분이 파일 이름과 똑같은 'SectionEventTrigger'여야 합니다!
+public class SectionEventTrigger : MonoBehaviour
 {
     public int sectionIndex;
+
+    // 🌟 새롭게 추가된 BGM 설정 칸
+    [Header("BGM 설정")]
+    [Tooltip("이 섹션에 진입할 때 재생할 BGM 번호 (재생하지 않으려면 -1 입력)")]
+    public int bgmIndex = -1;
 
     [Header("이전 섹션 배경 변경")]
     [Tooltip("이 섹션에 진입할 때 이전 섹션 배경을 '부서진' 버전으로 바꿀 ChapterController. 없으면 EnterTrigger에서 처리")]
@@ -22,7 +28,7 @@ public class SectionTrigger : MonoBehaviour
 
         if (Camera.main == null)
         {
-            Debug.LogWarning($"SectionTrigger ({gameObject.name}): Camera.main이 null입니다!");
+            Debug.LogWarning($"SectionEventTrigger ({gameObject.name}): Camera.main이 null입니다!");
             return;
         }
 
@@ -31,21 +37,28 @@ public class SectionTrigger : MonoBehaviour
             cam = Object.FindAnyObjectByType<CameraController>();
         if (cam == null)
         {
-            Debug.LogWarning($"SectionTrigger ({gameObject.name}): CameraController를 찾을 수 없습니다! Main Camera에 CameraController 컴포넌트를 추가하세요.");
+            Debug.LogWarning($"SectionEventTrigger ({gameObject.name}): CameraController를 찾을 수 없습니다! Main Camera에 CameraController 컴포넌트를 추가하세요.");
             return;
+        }
+
+        // 🌟 컷신이 시작되기 직전, 완벽한 타이밍에 BGM을 틀어줍니다!
+        if (bgmIndex >= 0 && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBGM(bgmIndex);
+            Debug.Log($"<color=yellow>[SectionEventTrigger]</color> 섹션 {sectionIndex} 진입! {bgmIndex}번 BGM 재생 시작");
         }
 
         // 섹션 4 진입 시 컷신 영상 재생
         if (sectionIndex == 4)
         {
-            Debug.Log("SectionTrigger: 섹션 4 트리거 진입 (컷신 시작)");
+            Debug.Log("SectionEventTrigger: 섹션 4 트리거 진입 (컷신 시작)");
             if (section4CutsceneVideo != null)
             {
                 _triggered = true;
                 StartCoroutine(PlaySection4CutsceneCoroutine(cam, section4CutsceneVideo));
                 return;
             }
-            Debug.LogWarning("SectionTrigger: 섹션 4 컷신 영상이 할당되지 않았습니다. Section_04 선택 후 Inspector에서 '닭이 날아가는 영상 (완).mp4'를 지정해주세요.");
+            Debug.LogWarning("SectionEventTrigger: 섹션 4 컷신 영상이 할당되지 않았습니다. Section_04 선택 후 Inspector에서 '닭이 날아가는 영상 (완).mp4'를 지정해주세요.");
         }
 
         ApplySection(cam);
@@ -55,7 +68,7 @@ public class SectionTrigger : MonoBehaviour
     {
         if (Camera.main == null)
         {
-            Debug.LogError("SectionTrigger: Camera.main이 null입니다.");
+            Debug.LogError("SectionEventTrigger: Camera.main이 null입니다.");
             ApplySection(cam);
             yield break;
         }
@@ -72,7 +85,6 @@ public class SectionTrigger : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         Rigidbody2D playerRb = player != null ? player.GetComponent<Rigidbody2D>() : null;
         Animator playerAnim = player != null ? player.GetComponent<Animator>() : null;
-        MonoBehaviour[] playerScripts = player != null ? player.GetComponents<MonoBehaviour>() : null;
 
         if (playerRb != null)
         {
@@ -105,7 +117,7 @@ public class SectionTrigger : MonoBehaviour
 
         // ====== 6. 재생 ======
         vp.Play();
-        Debug.Log("SectionTrigger: 섹션 4 컷신 영상 재생 시작");
+        Debug.Log("SectionEventTrigger: 섹션 4 컷신 영상 재생 시작");
 
         // ====== 7. 영상 끝날 때까지 대기 (스킵 가능) ======
         float duration = (float)clip.length;
@@ -119,7 +131,7 @@ public class SectionTrigger : MonoBehaviour
             // 스페이스 / 클릭 / ESC로 스킵 가능
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0))
             {
-                Debug.Log("SectionTrigger: 컷신 스킵!");
+                Debug.Log("SectionEventTrigger: 컷신 스킵!");
                 break;
             }
             yield return null;
@@ -147,13 +159,13 @@ public class SectionTrigger : MonoBehaviour
         // ====== 11. 섹션 전환 (영상 끝난 후!) ======
         ApplySection(cam);
 
-        Debug.Log("SectionTrigger: 섹션 4 컷신 종료, 섹션 4로 전환 완료");
+        Debug.Log("SectionEventTrigger: 섹션 4 컷신 종료, 섹션 4로 전환 완료");
     }
 
     void ApplySection(CameraController cam)
     {
         _triggered = true;
-        Debug.Log($"SectionTrigger: 섹션 {sectionIndex}로 이동 (트리거: {gameObject.name})");
+        Debug.Log($"SectionEventTrigger: 섹션 {sectionIndex}로 이동 (트리거: {gameObject.name})");
         float boundaryX = 0f;
         if (sectionIndex >= 1 && sectionIndex <= 3)
         {
@@ -162,7 +174,6 @@ public class SectionTrigger : MonoBehaviour
         }
         cam.SetSection(sectionIndex, boundaryX);
 
-        // 이전 섹션 배경을 '부서진' 버전으로 변경 (EnterTrigger 없을 때 대체)
         if (previousChapterToLock != null)
             previousChapterToLock.LockSection();
     }
